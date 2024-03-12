@@ -1,4 +1,3 @@
-import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { Books } from "./pages";
 import { AddBook, Update } from "./components";
