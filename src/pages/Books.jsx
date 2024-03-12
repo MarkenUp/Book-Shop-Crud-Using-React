@@ -68,10 +68,10 @@ const Books = () => {
               className="max-w-xs bg-white p-6 rounded-lg shadow-md w-full lg:w-1/5 mb-4 lg:mb-0"
               key={book.id}
             >
-              {books.cover && (
+              {book.cover && (
                 <img
                   className="w-full h-40 object-cover mb-4 rounded-md"
-                  src={book.cover}
+                  src={`./images/${book.cover}`}
                   alt=""
                 />
               )}
