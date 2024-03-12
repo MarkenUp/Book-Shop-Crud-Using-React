@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { MdClose } from "react-icons/md";
-import { AddBook } from "../components";
+import { AddBook, Update } from "../components";
 
 const Books = () => {
   const [books, setBooks] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   const openModal = () => {
     setModalOpen(true);
@@ -19,6 +21,23 @@ const Books = () => {
     setBooks([...books, newBook]);
   };
 
+  // Function to set the selected book when the Update button is clicked
+  const handleUpdateClick = (book) => {
+    setSelectedBook(book);
+    openUpdateModal();
+  };
+
+  // Function to open the Update modal
+  const openUpdateModal = () => {
+    setUpdateModalOpen(true);
+  };
+
+  // Function to close the Update modal
+  const closeUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedBook(null);
+  };
+
   useEffect(() => {
     const fetchAllBooks = async () => {
       try {
@@ -30,6 +49,15 @@ const Books = () => {
     };
     fetchAllBooks();
   }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8800/books/${id}`);
+      window.location.reload();
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="mt-10">
       <div>
@@ -52,10 +80,26 @@ const Books = () => {
               <span className="text-green-500 font-bold text-md">
                 &#8369;{book.price}
               </span>
+              <div className="flex justify-between mt-4">
+                <button
+                  onClick={() => handleUpdateClick(book)}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Update
+                </button>
+                <div className="gap-1">
+                  <button
+                    onClick={() => handleDelete(book.Id)}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-center mt-20">
+        <div className="flex items-center justify-center mt-10">
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={openModal}
@@ -74,6 +118,24 @@ const Books = () => {
                   <MdClose />
                 </button>
                 <AddBook closeModal={closeModal} updateBooks={updateBooks} />
+              </div>
+            </div>
+          )}
+
+          {updateModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-8 rounded shadow-md relative">
+                <button
+                  className="absolute top-2 right-5 text-xl text-gray-600 hover:text-gray-800"
+                  onClick={closeUpdateModal}
+                >
+                  <MdClose />
+                </button>
+                <Update
+                  book={selectedBook}
+                  closeModal={closeUpdateModal}
+                  updateBooks={updateBooks}
+                />
               </div>
             </div>
           )}
